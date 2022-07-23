@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const boardSchema = new Schema({
-  users: { type: String, required: true }, // TODO: change type
-  records: { type: String, required: true}, // TODO: change type
+  users: { type: [Schema.Types.ObjectId], required: true }, 
+  records: { type: [Schema.Types.ObjectId], required: true}, 
 }, {
   timestamps: true,
 });
