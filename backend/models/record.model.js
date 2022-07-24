@@ -14,4 +14,4 @@ const recordSchema = new Schema({
 
 const Record = mongoose.model('Record', recordSchema);
 
-module.exports = record;
+module.exports = Record;
