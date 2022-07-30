@@ -13,7 +13,7 @@ router.route('/:id').get((req, res) => {
     .catch(err => res.status(400).json('Error: ' + err));
 })
 
-router.route('/add').post((req, res) => {
+router.route('/create').post((req, res) => {
     const surname = req.body.surname;
     const lastname = req.body.lastname;
     const email = req.body.email;
@@ -27,7 +27,7 @@ router.route('/add').post((req, res) => {
     });
   
     newUser.save()
-    .then(() => res.json('User added!'))
+    .then(() => res.json('User created!'))
     .catch(err => res.status(400).json('Error: ' + err));
   });
 

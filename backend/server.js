@@ -20,7 +20,6 @@ connection.once('open', () => {
 
 const boardsRouter = require('./routes/boards');
 const usersRouter = require('./routes/users');
-const recordsRouter = require('./routes/records')
 
 app.use('/boards', boardsRouter);
 app.use('/users', usersRouter);
