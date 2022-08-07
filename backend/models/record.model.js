@@ -6,8 +6,8 @@ const recordSchema = new Schema({
   amount: { type: Number, required: true },
   description: { type: String, required: false},
   category: { type: String, required: true},
-  user: {type: String, required: true}, // TODO: change type
-  date: {type: Date, required: true}
+  user: {type: String, required: false}, // TODO: change type
+  date: {type: Date, required: false}
 }, {
   timestamps: true,
 });

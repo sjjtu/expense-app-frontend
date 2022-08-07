@@ -2,22 +2,48 @@ import React, { Component, useSyncExternalStore } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
+import ReadOnlyRows from './read-only-rows.component'
+import EditableRows from './editable-rows.component';
+
 let example_list = [{"name": "test1", "description":"this is a fictional board", "users":["user1", "user2"], "_id":"12312321"}];
 
-const Board = props => {return(
-    <tr>
-        <td> <Link to={"/boards/"+props.board._id}>{props.board.name}</Link></td>
-        <td>{props.board.description}</td>
-        <td>{(props.board.users).join(", ")}</td>
-    </tr>
-)}
+
+
+const Board = props => {
+    if ("readOnly" in props.board) {
+        return 
+    }
+
+    else {
+        return(
+            <tr>
+                <td> <Link to={"/boards/"+props.board._id}>{props.board.name}</Link></td>
+                <td >{props.board.description}</td>
+                <td>{(props.board.users).join(", ")}</td>
+                <td><button className='editRow'>Edit</button></td>
+            </tr>
+        )
+    }
+        
+
+}
+
 
 export default class BoardsList extends Component {
     constructor(props) {
         super(props);
+        this.createNewBoard = this.createNewBoard.bind(this);
         this.state = {
             boards: []
         }
+
+        this.handleOnEdit = this.handleOnEdit.bind(this);
+        this.handleOnSave = this.handleOnSave.bind(this);
+    }
+
+    createNewBoard() {
+        const newboards = this.state.boards.concat([{"name": "", "description":"", "users":[], "_editable": true, "_id":"temp"}])
+        this.setState({boards: newboards})
     }
 
     componentDidMount() {
@@ -32,9 +58,53 @@ export default class BoardsList extends Component {
              })
     }
 
+    handleOnEdit(id) {
+        const boards_map = new Map(this.state.boards.map(obj => [obj._id, obj]));
+        const editing_board =  boards_map.get(id);
+        editing_board["_editable"] = true;
+
+        console.log(Array.from(boards_map.values()));
+
+        this.setState({boards: Array.from(boards_map.values())})
+    }
+
+    handleOnSave(id, data) {
+
+        const POST_URL = id==="temp" ? `http://localhost:5000/boards/create` : `http://localhost:5000/boards/${id}/update`;
+
+        axios.post(POST_URL, data)
+            .then(res => {
+                console.log(res.data);
+                this.componentDidMount()
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        
+    }
+
+
     boardsList() {
         return this.state.boards.map(currentBoard => {
-            return <Board board={currentBoard} key={currentBoard._id}/>;
+            if ("_editable" in currentBoard) { // if it has an id then it already exists otherwise its a new entry
+                return <EditableRows 
+                            inputs={currentBoard} 
+                            link=""
+                            id={currentBoard._id}
+                            key={currentBoard._id}
+                            handleOnSave={this.handleOnSave}
+                        />;
+                
+            } else {
+                return <ReadOnlyRows 
+                            inputs={currentBoard} 
+                            id={currentBoard._id} 
+                            link={"/boards/"+currentBoard._id}
+                            key={currentBoard._id} 
+                            handleOnEdit={this.handleOnEdit}
+                        />;
+            }
+            
         })
     }
 
@@ -54,6 +124,7 @@ export default class BoardsList extends Component {
                 { this.boardsList() }
             </tbody>
             </table>
+            <button className='addRow' onClick={this.createNewBoard}>Add</button>
       </div>
         );
     }

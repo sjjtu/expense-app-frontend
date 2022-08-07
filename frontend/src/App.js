@@ -6,6 +6,12 @@ import { BrowserRouter as Router, Route, Routes, useParams} from "react-router-d
 
 import Navbar from './components/Navbar.component';
 import Boards from './components/boards.component';
+import Board from './components/board.component';
+
+const WrapperBoard = () => {
+  const id = useParams();
+  return <Board id={id}></Board>;
+}
 
 function App() {
   return (
@@ -14,7 +20,7 @@ function App() {
         <Navbar></Navbar>
         <Routes>
           <Route path="/boards" element={<Boards/>}></Route>
-          <Route path="/boards/:board_id"></Route>
+          <Route path="/boards/:id" element={<WrapperBoard/>}></Route>
           <Route path="/users"></Route>
         </Routes>
       </div>

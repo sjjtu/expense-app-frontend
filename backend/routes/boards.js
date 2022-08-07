@@ -11,7 +11,7 @@ router.route('/').get((req, res) => {
 
 router.route('/create').post((req, res) => {
     const name = req.body.name;
-    const users = [];
+    const users = req.body.users;
     const records = [];
     const description = req.body.description;
 
@@ -23,21 +23,31 @@ router.route('/create').post((req, res) => {
     });
 
     newBoard.save()
-        .then(() => res.json('Board created!'))
+        .then((result) => res.json({'msg':'Board created!', '_id':result._id}))
         .catch(err => res.status(400).json('Error: ' + err));
 });
   
 
 router.route('/:id').get((req, res) => {
     Board.findById(req.params.id)
-        .then(board => {    
+        .then((board) => {    
             let record_list = [];
             for (let recordId of board.records) {
 
                 Record.findById(recordId) // TODO: use async await
                     .then(record => { 
                         record_list.push(record);
-                        if (record_list.length == board.records.length) return res.json(record_list);
+                        if (record_list.length == board.records.length) {
+                            const m_board = {
+                                name: board.name,
+                                description: board.description,
+                                users: board.users,
+                                records: record_list,
+                                _id: board._id,
+                            }
+                            console.log(m_board)
+                            return res.json(m_board);
+                        }
                     })
                     .catch(err => res.status(400).json('Error: ' + err));
             }
@@ -95,8 +105,9 @@ router.route('/:id/addUser').post((req, res) => {
 
 router.route('/:id/createRecord').post((req, res) => {  // TODO: check if board exists !!
     Board.findById(req.params.id)
-        .then(board => {
-            
+        .then(board => {    
+            console.log("this is the board" + board);
+
             const amount = req.body.amount;
             const description = req.body.descripttion;
             const category = req.body.category;
@@ -111,18 +122,17 @@ router.route('/:id/createRecord').post((req, res) => {  // TODO: check if board 
                 date,
             })
 
-            newRecord.save()
-                    .then()
-                    .catch(err => res.status(400).json('Error: ' + err));
-
-            board.records.push(newRecord.id);
-
+            board.records.push(newRecord.id);    
             board.save()
-                .then(() => res.json(`Record ${newRecord.id} created in Board ${board.name}.`))
-                .catch(err => res.status(400).json("Error: " + err));
-
-            
+                .then( () => {
+                    
+                    newRecord.save()
+                    .then( () => res.json(`Record ${newRecord.id} created in Board ${board.name}.`))
+                    
+            })
         })
+                    
+
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
