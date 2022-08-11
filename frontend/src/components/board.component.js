@@ -5,8 +5,6 @@ import axios from 'axios';
 import ReadOnlyRows from "./read-only-rows.component";
 import EditableRows from './editable-rows.component';
 
-const example_list = [{amount: 123, description: "ficitonal record", category: "cat", user: [], date: "2022-07-12", _id:"a12312d21d"}]
-
 const Record = props => {
     return(
         <tr>
@@ -37,7 +35,6 @@ export default class Board extends Component {
     }
 
     componentDidMount() {
-        this.setState({records: example_list});
         axios.get("http://localhost:5000/boards/"+this.board_id)
             .then(res => {
                 console.log(res.data);
@@ -53,26 +50,26 @@ export default class Board extends Component {
             if("_editable" in currentRecord)
                 return <EditableRows 
                             inputs={currentRecord}
+                            attrList={["amount", "description", "category", "user", "date"]}
                             id={currentRecord._id} 
                             key={currentRecord._id}
-                            handleOnSave={this.handleOnSave}
-                            link="">    
+                            handleOnSave={this.handleOnSave}>    
                         </EditableRows>
                 
             else {
                 return <ReadOnlyRows 
                             inputs={currentRecord} 
+                            attrList={["amount", "description", "category", "user", "date"]}
                             handleOnEdit={this.handleOnEdit}
                             id={currentRecord._id}
-                            key={currentRecord._id} 
-                            link="">
+                            key={currentRecord._id}>
                         </ReadOnlyRows>;
             }
         })
     }
 
     createNewRecord() {
-        const newrecords = this.state.records.concat([{"amount":"", "description":"", "category":"", "users":[], "date":"", "_id":"temp", "_editable":true}]);
+        const newrecords = this.state.records.concat([{"amount":"", "description":"", "category":"", "user":"", "date":"", "_id":"temp", "_editable":true}]);
         this.setState({records: newrecords});
     }
 
@@ -110,7 +107,7 @@ export default class Board extends Component {
                 <th>Amount</th>
                 <th>Description</th>
                 <th>Category</th>
-                <th>Users</th>
+                <th>User</th>
                 <th>Date</th>
                 </tr>
             </thead>

@@ -1,20 +1,26 @@
 import { Link } from "react-router-dom";
 
-const ReadOnlyRows = ({inputs, link, handleOnEdit, id}) => {
+const ReadOnlyRows = ({inputs, attrList, link="", handleOnEdit, id, handleOnDelete}) => {
 
-    const onChange = (event) => 3;
+    const onClick = (event) => {
+        if (!(link=="")) window.location = link;
+    };
 
     const onEdit = () => {
         handleOnEdit(id)
     }
 
+    const onDelete = () => {
+        handleOnDelete(id)
+    }
+
     return (
-        <tr onChange={onChange}>
+        <tr>
             {Object.entries(inputs).map( ([key, value]) => {
-                if (key.includes("_")) return // for example _id should not be displayed here
-                return (<td key={key}>{value}</td>)
+                if (attrList.includes(key)) return (<td key={key}><div onClick={onClick}>{value}</div></td>)
             })}
             <td><button onClick={onEdit}>Edit</button></td>
+            <td><button onClick={onDelete}>Delete</button></td>
         </tr>
             
     )

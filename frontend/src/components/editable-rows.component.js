@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const EditableRows = ({inputs, handleOnSave, id}) => {
+const EditableRows = ({inputs, attrList, handleOnSave, id}) => {
 
     const onChange = (event) => {
         inputs[event.target.name] = event.target.value;
@@ -8,15 +8,14 @@ const EditableRows = ({inputs, handleOnSave, id}) => {
 
     const onSave = () => {
         delete inputs["_editable"];
-        // console.log(inputs);
+        console.log(inputs);
         handleOnSave(id, inputs)
     }
 
     return (
         <tr onChange={onChange}>
             {Object.entries(inputs).map( ([key, value]) => {
-                if (key.includes("_")) return
-                return (<td><input
+                if (attrList.includes(key)) return (<td><input
                     type="text"
                     name={key}
                     defaultValue={value}

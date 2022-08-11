@@ -5,9 +5,6 @@ import axios from 'axios';
 import ReadOnlyRows from './read-only-rows.component'
 import EditableRows from './editable-rows.component';
 
-let example_list = [{"name": "test1", "description":"this is a fictional board", "users":["user1", "user2"], "_id":"12312321"}];
-
-
 
 const Board = props => {
     if ("readOnly" in props.board) {
@@ -39,6 +36,7 @@ export default class BoardsList extends Component {
 
         this.handleOnEdit = this.handleOnEdit.bind(this);
         this.handleOnSave = this.handleOnSave.bind(this);
+        this.handleOnDelete = this.handleOnDelete.bind(this);
     }
 
     createNewBoard() {
@@ -47,7 +45,6 @@ export default class BoardsList extends Component {
     }
 
     componentDidMount() {
-        this.setState({boards: example_list});
         axios.get("http://localhost:5000/boards/")
             .then(res => {
                 console.log(res.data);
@@ -83,13 +80,26 @@ export default class BoardsList extends Component {
         
     }
 
+    handleOnDelete(id) {
+        const DELETE_URL = `http:localhost:5000/boards/${id}`
+        axios.delete(DELETE_URL)
+            .then(res => {
+                console.log(res.data);
+                this.componentDidMount();
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+    }
+
 
     boardsList() {
         return this.state.boards.map(currentBoard => {
             if ("_editable" in currentBoard) { // if it has an id then it already exists otherwise its a new entry
                 return <EditableRows 
                             inputs={currentBoard} 
-                            link=""
+                            attrList={["name", "description", "users"]}
+                            link={`/boards/${currentBoard._id}`}
                             id={currentBoard._id}
                             key={currentBoard._id}
                             handleOnSave={this.handleOnSave}
@@ -98,10 +108,12 @@ export default class BoardsList extends Component {
             } else {
                 return <ReadOnlyRows 
                             inputs={currentBoard} 
+                            attrList={["name", "description", "users"]}
                             id={currentBoard._id} 
                             link={"/boards/"+currentBoard._id}
                             key={currentBoard._id} 
                             handleOnEdit={this.handleOnEdit}
+                            handleOnDelete={this.handleOnDelete}
                         />;
             }
             

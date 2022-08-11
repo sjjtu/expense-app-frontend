@@ -45,7 +45,6 @@ router.route('/:id').get((req, res) => {
                                 records: record_list,
                                 _id: board._id,
                             }
-                            console.log(m_board)
                             return res.json(m_board);
                         }
                     })
@@ -106,10 +105,10 @@ router.route('/:id/addUser').post((req, res) => {
 router.route('/:id/createRecord').post((req, res) => {  // TODO: check if board exists !!
     Board.findById(req.params.id)
         .then(board => {    
-            console.log("this is the board" + board);
+            // console.log("this is the board" + board);
 
             const amount = req.body.amount;
-            const description = req.body.descripttion;
+            const description = req.body.description;
             const category = req.body.category;
             const user = req.body.user;
             const date = Date(req.body.date);
