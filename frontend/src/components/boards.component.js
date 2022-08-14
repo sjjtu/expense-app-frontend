@@ -81,7 +81,7 @@ export default class BoardsList extends Component {
     }
 
     handleOnDelete(id) {
-        const DELETE_URL = `http:localhost:5000/boards/${id}`
+        const DELETE_URL = `http://localhost:5000/boards/${id}`
         axios.delete(DELETE_URL)
             .then(res => {
                 console.log(res.data);

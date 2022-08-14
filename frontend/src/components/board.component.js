@@ -31,6 +31,7 @@ export default class Board extends Component {
 
         this.handleOnEdit = this.handleOnEdit.bind(this);
         this.handleOnSave = this.handleOnSave.bind(this);
+        this.handleOnDelete = this.handleOnDelete.bind(this);
 
     }
 
@@ -62,6 +63,7 @@ export default class Board extends Component {
                             attrList={["amount", "description", "category", "user", "date"]}
                             handleOnEdit={this.handleOnEdit}
                             id={currentRecord._id}
+                            handleOnDelete={this.handleOnDelete}
                             key={currentRecord._id}>
                         </ReadOnlyRows>;
             }
@@ -80,12 +82,12 @@ export default class Board extends Component {
 
         // console.log(Array.from(records_map.values()  ));
 
-        this.setState({boards: Array.from(records_map.values())})
+        this.setState({records: Array.from(records_map.values())})
     }
 
     handleOnSave(id, data) {
-        const POST_URL = id==="temp" ? `http://localhost:5000/boards/${this.board_id}/createRecord` : `http://localhost:5000/boards/${id}/update`;
-
+        const POST_URL = id==="temp" ? `http://localhost:5000/boards/${this.board_id}/createRecord` : `http://localhost:5000/boards/${this.board_id}/${id}/update`;
+        console.log(data)
         axios.post(POST_URL, data)
             .then(res => {
                 console.log(res.data);
@@ -93,6 +95,18 @@ export default class Board extends Component {
             })
             .catch((error) => {
                 console.log(error);
+            })
+    }
+
+    handleOnDelete(id) {
+        const DELETE_URL = `http://localhost:5000/boards/${this.board_id}/${id}`
+
+        axios.delete(DELETE_URL)
+            .then(res => {
+                this.componentDidMount()
+            })
+            .catch((err) => {
+                console.log(err)
             })
     }
 

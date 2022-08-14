@@ -135,5 +135,39 @@ router.route('/:id/createRecord').post((req, res) => {  // TODO: check if board 
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/:board_id/:record_id/update').post((req, res) => {
+    Record.findById(req.params.record_id)
+        .then(record => {
+            if(req.body.amount) record.amount = req.body.amount;
+            if(req.body.description) record.description = req.body.description;
+            if(req.body.category) record.category = req.body.category;
+            if(req.body.user) record.user = req.body.user;
+
+            record.save()
+                .then(() => {
+                    res.json(`Record ${req.params.record_id} updated`);
+                })
+                .catch(err => res.status(400).json("Error" + err))
+        })
+        .catch(err => res.status(400).json('Error' + err))
+})
+
+
+router.route('/:board_id/:record_id').delete((req, res) => {
+    Board.findById(req.params.board_id)
+        .then(board => {
+            const records_map = new Map(board.records.map(obj => [obj._id.toString(), obj]));
+            
+            records_map.delete(req.params.record_id);
+            board.records = Array.from(records_map.values());
+
+            board.save()
+                .then(() => {
+                    Record.findByIdAndDelete(req.params.record_id)
+                        .then(() => res.json(`Record ${req.params.record_id} deleted from board ${board.name}`))
+                })
+        })
+        .catch(err => res.status(400).json('Error' + err))
+})
 
 module.exports = router;
