@@ -26,7 +26,8 @@ export default class Board extends Component {
             records: [],
             name: "",
             description: "",
-            users: []
+            users: [],
+            categories: []
         };
 
         this.handleOnEdit = this.handleOnEdit.bind(this);
@@ -54,7 +55,9 @@ export default class Board extends Component {
                             attrList={["amount", "description", "category", "user", "date"]}
                             id={currentRecord._id} 
                             key={currentRecord._id}
-                            handleOnSave={this.handleOnSave}>    
+                            handleOnSave={this.handleOnSave}
+                            catList={this.state.categories}>    
+                            
                         </EditableRows>
                 
             else {

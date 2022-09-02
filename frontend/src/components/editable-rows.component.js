@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 
-const EditableRows = ({inputs, attrList, handleOnSave, id}) => {
+const EditableRows = ({inputs, attrList, handleOnSave, id, catList=[]}) => {
 
     const onChange = (event) => {
         inputs[event.target.name] = event.target.value;
+        console.log(inputs[event.target.name])
     };
 
     const onSave = () => {
@@ -15,6 +16,11 @@ const EditableRows = ({inputs, attrList, handleOnSave, id}) => {
     return (
         <tr onChange={onChange}>
             {Object.entries(inputs).map( ([key, value]) => {
+                if (key=="category") return (
+                    <td><select name={key} defaultValue={inputs[key]}>
+                        {catList.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                    </select></td>
+                )
                 if (attrList.includes(key)) return (<td><input
                     type="text"
                     name={key}

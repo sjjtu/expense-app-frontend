@@ -1,6 +1,7 @@
 const router = require('express').Router();
 let Board = require('../models/board.model');
 let Record = require('../models/record.model')
+let CategoriesList = require('../models/categoriesList');
 
 router.route('/').get((req, res) => {
   Board.find()
@@ -14,12 +15,14 @@ router.route('/create').post((req, res) => {
     const users = req.body.users;
     const records = [];
     const description = req.body.description;
+    const categories = req.body.categories ? req.body.categories : "6311184850f1b9d9c5aa8607" // TODO generate dynamically default value
 
     const newBoard = new Board({
         name,
         description,
         users,
         records,
+        categories
     });
 
     newBoard.save()
@@ -28,31 +31,31 @@ router.route('/create').post((req, res) => {
 });
   
 
-router.route('/:id').get((req, res) => {
-    Board.findById(req.params.id)
-        .then((board) => {    
-            let record_list = [];
+router.route('/:id').get(async (req, res) => {
+    const board = await Board.findById(req.params.id)
+    let record_list = [];
+    let categories = [];
+    CategoriesList.findById(board.categories, "categories")
+        .then(catList => {categories = catList.categories;})
+        .then(async () => {
             for (let recordId of board.records) {
-
-                Record.findById(recordId) // TODO: use async await
-                    .then(record => { 
-                        record_list.push(record);
-                        if (record_list.length == board.records.length) {
-                            const m_board = {
-                                name: board.name,
-                                description: board.description,
-                                users: board.users,
-                                records: record_list,
-                                _id: board._id,
-                            }
-                            return res.json(m_board);
-                        }
-                    })
-                    .catch(err => res.status(400).json('Error: ' + err));
+                let record = await Record.findById(recordId);
+                record_list.push(record);
             }
-            
+        })
+        .then(() => {
+            res.json({
+                name: board.name,
+                description: board.description,
+                users: board.users,
+                categories: categories,
+                records: record_list,
+                _id: board._id,
+            })
         })
         .catch(err => res.status(400).json('Error: ' + err));
+
+    
 });
   
 
