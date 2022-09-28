@@ -45,7 +45,7 @@ export default class BoardsList extends Component {
     }
 
     componentDidMount() {
-        axios.get("http://localhost:5000/boards/")
+        axios.get(process.env.react_app_backend_url)
             .then(res => {
                 console.log(res.data);
                 this.setState({boards: res.data})
@@ -67,7 +67,7 @@ export default class BoardsList extends Component {
 
     handleOnSave(id, data) {
 
-        const POST_URL = id==="temp" ? `http://localhost:5000/boards/create` : `http://localhost:5000/boards/${id}/update`;
+        const POST_URL = id==="temp" ? `${process.env.react_app_backend_url}/create` : `${process.env.react_app_backend_url}/boards/${id}/update`;
 
         axios.post(POST_URL, data)
             .then(res => {
@@ -81,7 +81,7 @@ export default class BoardsList extends Component {
     }
 
     handleOnDelete(id) {
-        const DELETE_URL = `http://localhost:5000/boards/${id}`
+        const DELETE_URL = `${process.env.react_app_backend_url}/boards/${id}`
         axios.delete(DELETE_URL)
             .then(res => {
                 console.log(res.data);
