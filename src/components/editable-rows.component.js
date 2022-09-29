@@ -1,3 +1,4 @@
+import React, { Component }  from 'react';
 import { Link } from "react-router-dom";
 
 const EditableRows = ({inputs, attrList, handleOnSave, id, catList=[]}) => {
