@@ -1,12 +1,13 @@
-import logo from './logo.svg';
+import React, { Component }  from 'react';
 import './App.css';
-import Reach from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
+  import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Route, Routes, useParams} from "react-router-dom";
 
 import Navbar from './components/Navbar.component';
 import Boards from './components/boards.component';
 import Board from './components/board.component';
+
+require('dotenv').config()
 
 const WrapperBoard = () => {
   const id = useParams();
@@ -14,6 +15,7 @@ const WrapperBoard = () => {
 }
 
 function App() {
+  console.log(`${process.env.react_app_backend_url}`);
   return (
     <Router>
       <div className='container'>
