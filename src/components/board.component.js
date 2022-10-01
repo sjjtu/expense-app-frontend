@@ -37,7 +37,7 @@ export default class Board extends Component {
     }
 
     componentDidMount() {
-        axios.get(process.env.react_app_backend_url+this.board_id)
+        axios.get(process.env.react_app_backend_url+"/boards/"+this.board_id)
             .then(res => {
                 console.log(res.data);
                 this.setState(res.data)
@@ -89,7 +89,7 @@ export default class Board extends Component {
     }
 
     handleOnSave(id, data) {
-        const POST_URL = id==="temp" ? `${process.env.react_app_backend_url}/${this.board_id}/createRecord` : `${process.env.react_app_backend_url}/${this.board_id}/${id}/update`;
+        const POST_URL = id==="temp" ? `${process.env.react_app_backend_url}/boards/${this.board_id}/createRecord` : `${process.env.react_app_backend_url}/boards/${this.board_id}/${id}/update`;
         console.log(data)
         axios.post(POST_URL, data)
             .then(res => {
@@ -102,7 +102,7 @@ export default class Board extends Component {
     }
 
     handleOnDelete(id) {
-        const DELETE_URL = `${process.env.react_app_backend_url}/${this.board_id}/${id}`
+        const DELETE_URL = `${process.env.react_app_backend_url}/boards/${this.board_id}/${id}`
 
         axios.delete(DELETE_URL)
             .then(res => {
