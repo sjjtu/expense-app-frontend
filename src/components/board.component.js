@@ -48,29 +48,32 @@ export default class Board extends Component {
     }
 
     recordsList() {
-        return this.state.records.map(currentRecord => {
-            if("_editable" in currentRecord)
-                return <EditableRows 
-                            inputs={currentRecord}
-                            attrList={["amount", "description", "category", "user", "date"]}
-                            id={currentRecord._id} 
-                            key={currentRecord._id}
-                            handleOnSave={this.handleOnSave}
-                            catList={this.state.categories}>    
-                            
-                        </EditableRows>
-                
-            else {
-                return <ReadOnlyRows 
-                            inputs={currentRecord} 
-                            attrList={["amount", "description", "category", "user", "date"]}
-                            handleOnEdit={this.handleOnEdit}
-                            id={currentRecord._id}
-                            handleOnDelete={this.handleOnDelete}
-                            key={currentRecord._id}>
-                        </ReadOnlyRows>;
-            }
-        })
+        if (this.state.records.length == 1) return; 
+        else{
+            return this.state.records.map(currentRecord => {
+                if("_editable" in currentRecord)
+                    return <EditableRows 
+                                inputs={currentRecord}
+                                attrList={["amount", "description", "category", "user", "date"]}
+                                id={currentRecord._id} 
+                                key={currentRecord._id}
+                                handleOnSave={this.handleOnSave}
+                                catList={this.state.categories}>    
+                                
+                            </EditableRows>
+                    
+                else {
+                    return <ReadOnlyRows 
+                                inputs={currentRecord} 
+                                attrList={["amount", "description", "category", "user", "date"]}
+                                handleOnEdit={this.handleOnEdit}
+                                id={currentRecord._id}
+                                handleOnDelete={this.handleOnDelete}
+                                key={currentRecord._id}>
+                            </ReadOnlyRows>;
+                }
+            })
+        }
     }
 
     createNewRecord() {
