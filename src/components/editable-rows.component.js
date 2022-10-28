@@ -5,12 +5,10 @@ const EditableRows = ({inputs, attrList, handleOnSave, id, catList=[]}) => {
 
     const onChange = (event) => {
         inputs[event.target.name] = event.target.value;
-        console.log(inputs[event.target.name])
     };
 
     const onSave = () => {
         delete inputs["_editable"];
-        console.log(inputs);
         handleOnSave(id, inputs)
     }
 

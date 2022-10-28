@@ -1,4 +1,4 @@
-import React, { Component, useSyncExternalStore } from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
@@ -6,32 +6,14 @@ import ReadOnlyRows from './read-only-rows.component'
 import EditableRows from './editable-rows.component';
 
 
-const Board = props => {
-    if ("readOnly" in props.board) {
-        return 
-    }
-
-    else {
-        return(
-            <tr>
-                <td> <Link to={"/boards/"+props.board._id}>{props.board.name}</Link></td>
-                <td >{props.board.description}</td>
-                <td>{(props.board.users).join(", ")}</td>
-                <td><button className='editRow'>Edit</button></td>
-            </tr>
-        )
-    }
-        
-
-}
-
 
 export default class BoardsList extends Component {
     constructor(props) {
         super(props);
         this.createNewBoard = this.createNewBoard.bind(this);
         this.state = {
-            boards: []
+            boards: [],
+            isAddable: true // indicate whether the app has been pushed or not
         }
 
         this.handleOnEdit = this.handleOnEdit.bind(this);
@@ -40,15 +22,20 @@ export default class BoardsList extends Component {
     }
 
     createNewBoard() {
-        const newboards = this.state.boards.concat([{"name": "", "description":"", "users":[], "_editable": true, "_id":"temp"}])
-        this.setState({boards: newboards})
+        if (this.state.isAddable === false){
+            alert("could not add new board")
+        }
+        else {
+            const newboards = this.state.boards.concat([{"name": "", "description":"", "users":[], "_editable": true, "_id":"temp"}])
+            this.setState({boards: newboards, isAddable: false});
+        }
     }
 
     componentDidMount() {
         axios.get(`${process.env.react_app_backend_url}/boards`)   
             .then(res => {
                 console.log(res.data);
-                this.setState({boards: res.data})
+                this.setState({boards: res.data, isAddable:true})
             })
             .catch((error) => {
                     console.log(error);

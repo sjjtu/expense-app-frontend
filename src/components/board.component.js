@@ -1,21 +1,9 @@
-import React, { Component, useSyncExternalStore } from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 
 import ReadOnlyRows from "./read-only-rows.component";
 import EditableRows from './editable-rows.component';
-
-const Record = props => {
-    return(
-        <tr>
-            <td> {props.record.amount}</td>
-            <td>{props.record.description}</td>
-            <td>{props.record.category}</td>
-            <td>{props.record.users}</td>
-            <td>{props.record.date}</td>
-        </tr>
-    )
-}
 
 export default class Board extends Component {
     constructor(props) {
@@ -23,11 +11,14 @@ export default class Board extends Component {
         this.board_id = props.id.id;
         this.createNewRecord = this.createNewRecord.bind(this);
         this.state = {
-            records: [],
-            name: "",
-            description: "",
-            users: [],
-            categories: []
+            board: {
+                records: [],
+                name: "",
+                description: "",
+                users: [],
+                categories: [],
+            },
+            isAddable: true
         };
 
         this.handleOnEdit = this.handleOnEdit.bind(this);
@@ -40,7 +31,7 @@ export default class Board extends Component {
         axios.get(process.env.react_app_backend_url+"/boards/"+this.board_id)
             .then(res => {
                 console.log(res.data);
-                this.setState(res.data)
+                this.setState({board: res.data, isAddable: true})
             })
             .catch((error) => {
                     console.log(error);
@@ -48,37 +39,42 @@ export default class Board extends Component {
     }
 
     recordsList() {
-        if (this.state.records.length == 1) return; 
-        else{
-            return this.state.records.map(currentRecord => {
-                if("_editable" in currentRecord)
-                    return <EditableRows 
-                                inputs={currentRecord}
-                                attrList={["amount", "description", "category", "user", "date"]}
-                                id={currentRecord._id} 
-                                key={currentRecord._id}
-                                handleOnSave={this.handleOnSave}
-                                catList={this.state.categories}>    
-                                
-                            </EditableRows>
-                    
-                else {
-                    return <ReadOnlyRows 
-                                inputs={currentRecord} 
-                                attrList={["amount", "description", "category", "user", "date"]}
-                                handleOnEdit={this.handleOnEdit}
-                                id={currentRecord._id}
-                                handleOnDelete={this.handleOnDelete}
-                                key={currentRecord._id}>
-                            </ReadOnlyRows>;
-                }
-            })
-        }
+        return this.state.board.records.map(currentRecord => {
+            if("_editable" in currentRecord){
+                console.log(this.state.board)
+                return <EditableRows 
+                            inputs={currentRecord}
+                            attrList={["amount", "description", "category", "user", "date"]}
+                            id={currentRecord._id} 
+                            key={currentRecord._id}
+                            handleOnSave={this.handleOnSave}
+                            catList={this.state.board.categories}>    
+                            
+                        </EditableRows>
+            }
+            else {
+                return <ReadOnlyRows 
+                            inputs={currentRecord} 
+                            attrList={["amount", "description", "category", "user", "date"]}
+                            handleOnEdit={this.handleOnEdit}
+                            id={currentRecord._id}
+                            handleOnDelete={this.handleOnDelete}
+                            key={currentRecord._id}>
+                        </ReadOnlyRows>;
+            }
+        })
     }
 
     createNewRecord() {
-        const newrecords = this.state.records.concat([{"amount":"", "description":"", "category":"", "user":"", "date":"", "_id":"temp", "_editable":true}]);
-        this.setState({records: newrecords});
+        if(this.state.isAddable===false){
+            alert("could not create new record")
+        }
+        else {
+            const newrecords = this.state.board.records.concat([{"amount":"", "description":"", "category":"", "user":"", "date":"", "_id":"temp", "_editable":true}]);
+            this.setState({board: {records: newrecords, name: this.state.board.name, description: this.state.board.description, users: this.state.board.users, categories: this.state.board.categories,}, isAddable: false});
+            console.log("add record button pushed")
+        }
+        
     }
 
     handleOnEdit(id) {
