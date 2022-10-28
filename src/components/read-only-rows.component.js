@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const ReadOnlyRows = ({inputs, attrList, link="", handleOnEdit, id, handleOnDelete}) => {
 
     const onClick = (event) => {
-        if (!(link=="")) window.location = link;
+        if (!(link==="")) window.location = link;
     };
 
     const onEdit = () => {
