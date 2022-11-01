@@ -10,14 +10,13 @@ export default class Board extends Component {
         super(props);
         this.board_id = props.id.id;
         this.createNewRecord = this.createNewRecord.bind(this);
+        this.usersList = [];
         this.state = {
-            board: {
-                records: [],
-                name: "",
-                description: "",
-                users: [],
-                categories: [],
-            },
+            records: [],
+            name: "",
+            description: "",
+            users: [],
+            categories: [],
             isAddable: true
         };
 
@@ -31,24 +30,37 @@ export default class Board extends Component {
         axios.get(process.env.react_app_backend_url+"/boards/"+this.board_id)
             .then(res => {
                 console.log(res.data);
-                this.setState({board: res.data, isAddable: true})
+                this.setState({
+                    records: res.data.records,
+                    name: res.data.name,
+                    description: res.data.description,
+                    users: res.data.users,
+                    categories: res.data.categories
+                })
             })
             .catch((error) => {
                     console.log(error);
              });
+        axios.get(process.env.react_app_backend_url+"/users/")
+             .then(res => {
+                this.usersList = res.data.map(user => user.name);
+
+             })
     }
 
     recordsList() {
-        return this.state.board.records.map(currentRecord => {
+        console.log(this.usersList)
+        return this.state.records.map(currentRecord => {
             if("_editable" in currentRecord){
-                console.log(this.state.board)
+
                 return <EditableRows 
                             inputs={currentRecord}
                             attrList={["amount", "description", "category", "user", "date"]}
+                            usersList={this.usersList}
                             id={currentRecord._id} 
                             key={currentRecord._id}
                             handleOnSave={this.handleOnSave}
-                            catList={this.state.board.categories}>    
+                            catList={this.state.categories}>    
                             
                         </EditableRows>
             }
@@ -70,8 +82,8 @@ export default class Board extends Component {
             alert("could not create new record")
         }
         else {
-            const newrecords = this.state.board.records.concat([{"amount":"", "description":"", "category":"", "user":"", "date":"", "_id":"temp", "_editable":true}]);
-            this.setState({board: {records: newrecords, name: this.state.board.name, description: this.state.board.description, users: this.state.board.users, categories: this.state.board.categories,}, isAddable: false});
+            const newrecords = this.state.records.concat([{"amount":"", "description":"", "category":"", "user":[], "date":"", "_id":"temp", "_editable":true}]);
+            this.setState({records: newrecords, isAddable: false});
             console.log("add record button pushed")
         }
         
@@ -84,7 +96,7 @@ export default class Board extends Component {
 
         // console.log(Array.from(records_map.values()  ));
 
-        this.setState({records: Array.from(records_map.values())})
+        this.setState({records: Array.from(records_map.values())});
     }
 
     handleOnSave(id, data) {
@@ -97,6 +109,7 @@ export default class Board extends Component {
             })
             .catch((error) => {
                 console.log(error);
+                return(<div class="alert alert-primary" role="alert">alert</div>)
             })
     }
 

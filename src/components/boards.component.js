@@ -40,6 +40,10 @@ export default class BoardsList extends Component {
             .catch((error) => {
                     console.log(error);
              })
+        axios.get(process.env.react_app_backend_url+"/users/")
+            .then(res => {
+                this.usersList = res.data.map(user => user.name)
+            })
     }
 
     handleOnEdit(id) {
@@ -55,7 +59,6 @@ export default class BoardsList extends Component {
     handleOnSave(id, data) {
 
         const POST_URL = id==="temp" ? `${process.env.react_app_backend_url}/boards/create` : `${process.env.react_app_backend_url}/boards/${id}/update`;
-        console.log(`${process.env.react_app_backend_url}`)
         axios.post(POST_URL, data)
             .then(res => {
                 console.log(res.data);
@@ -86,6 +89,7 @@ export default class BoardsList extends Component {
                 return <EditableRows 
                             inputs={currentBoard} 
                             attrList={["name", "description", "users"]}
+                            usersList={this.usersList}
                             link={`/boards/${currentBoard._id}`}
                             id={currentBoard._id}
                             key={currentBoard._id}
