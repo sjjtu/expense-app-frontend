@@ -18,7 +18,7 @@ const ReadOnlyRows = ({inputs, attrList, link="", handleOnEdit, id, handleOnDele
     return (
         <tr>
             {Object.entries(inputs).map( ([key, value]) => {
-                if (attrList.includes(key)) return (<td key={key}><div onClick={onClick}>{value}</div></td>)
+                if (attrList.includes(key)) return (<td key={key}><div onClick={onClick}>{value.toString()}</div></td>)
             })}
             <td><button onClick={onEdit}>Edit</button></td>
             <td><button onClick={onDelete}>Delete</button></td>
